@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6 text-center">
+        <h1 class="mb-4 fw-bold">今天吃什麼？</h1>
+        <p class="text-muted mb-4">別想了，交給命運決定吧！</p>
+
+        <!-- Result Display -->
+        {% if recommended %}
+        <div class="card border-primary mb-5 shadow-lg" style="animation: fadeIn 0.5s;">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="bi bi-stars"></i> 推薦餐廳 <i class="bi bi-stars"></i></h4>
+            </div>
+            <div class="card-body py-5">
+                <h2 class="card-title text-primary fw-bold mb-3">{{ recommended.name }}</h2>
+                <div class="mb-3">
+                    <span class="badge bg-secondary fs-6">{{ recommended.type }}</span>
+                    <span class="badge bg-success fs-6">
+                        {% if recommended.price_level == 1 %}$ 平價
+                        {% elif recommended.price_level == 2 %}$$ 中等
+                        {% elif recommended.price_level == 3 %}$$$ 昂貴
+                        {% else %}價位未知{% endif %}
+                    </span>
+                    {% if recommended.is_vegetarian %}
+                    <span class="badge bg-success fs-6"><i class="bi bi-leaf"></i> 素食</span>
+                    {% endif %}
+                    {% if recommended.is_spicy %}
+                    <span class="badge bg-danger fs-6"><i class="bi bi-fire"></i> 辣</span>
+                    {% endif %}
+                </div>
+                <hr>
+                <p class="card-text text-muted mb-4"><i class="bi bi-geo-alt-fill text-danger"></i> 地址：{{ recommended.address }}</p>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="https://www.google.com/maps/search/?api=1&query={{ recommended.name }} {{ recommended.address }}" target="_blank" class="btn btn-outline-primary px-4">
+                        <i class="bi bi-map"></i> 查看地圖導航
+                    </a>
+                    <a href="{{ url_for('main.index') }}" class="btn btn-secondary px-4">重新設定</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Filter & Randomizer Form -->
+        <div class="card shadow-sm mt-4 border-0">
+            <div class="card-body p-4 text-start bg-white rounded">
+                <form action="{{ url_for('main.random_restaurant') }}" method="POST">
+                    <h5 class="mb-4 text-secondary border-bottom pb-2"><i class="bi bi-sliders"></i> 極簡篩選條件 (選填)</h5>
+                    
+                    <div class="mb-4">
+                        <label for="price_level" class="form-label text-muted">價格區間</label>
+                        <select class="form-select form-select-lg bg-light" id="price_level" name="price_level">
+                            <option value="all">不限</option>
+                            <option value="1">$ 平價</option>
+                            <option value="2">$$ 中等</option>
+                            <option value="3">$$$ 昂貴</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="form-check form-switch form-check-inline me-4">
+                            <input class="form-check-input" type="checkbox" id="is_vegetarian" name="is_vegetarian">
+                            <label class="form-check-label text-muted" for="is_vegetarian">我想吃素</label>
+                        </div>
+                        <div class="form-check form-switch form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="is_spicy" name="is_spicy">
+                            <label class="form-check-label text-muted" for="is_spicy">我想吃辣</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100 py-3 fw-bold fs-4 shadow-sm" style="border-radius: 50px;">
+                        <i class="bi bi-dice-5-fill"></i> 一鍵隨便吃！
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+{% endblock %}
